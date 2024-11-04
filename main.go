@@ -18,8 +18,8 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", handlers.App)
 	mux.Handle("GET /public/assets/", http.StripPrefix("/public/", http.FileServer(http.FS(public.FS))))
+	mux.HandleFunc("GET /", handlers.App)
 
 	slog.Info("HTTP server startedd", "listenAddr", listenAddr)
 	err := http.ListenAndServe(listenAddr, mux)
