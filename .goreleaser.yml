@@ -1,3 +1,4 @@
+version: 2
 archives:
   - name_template: "{{.Binary}}_{{.Os}}_{{.Arch}}"
     format_overrides:
