@@ -1,0 +1,16 @@
+archives:
+  - name_template: "{{.Binary}}_{{.Os}}_{{.Arch}}"
+    format_overrides:
+    - goos: windows
+      format: zip
+builds:
+  - main: ./main.go
+    id: "cmd"
+    binary: batesul
+    ldflags:
+      - -X main.Version={{.Tag}}
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
