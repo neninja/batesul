@@ -8,8 +8,6 @@ builds:
   - main: ./main.go
     id: "cmd"
     binary: batesul
-    ldflags:
-      - -X main.Version={{.Tag}}
     goos:
       - linux
       - windows
