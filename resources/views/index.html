@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Calculadora de Horário</title>
+    <link href="/public/assets/bootstrap.css?v={{.Version}}" rel="stylesheet" />
+    <script src="/public/assets/bootstrap.js?v={{.Version}}" type="text/javascript"></script>
+</head>
+<body>
+    <div x-data="app" x-init="init()" class="max-w-md mx-auto bg-white p-6 rounded-lg">
+        <h1 class="text-2xl font-bold mb-4">Calculadora de Horário</h1>
+        <form @submit.prevent>
+            <div class="mb-2">
+                <button type="reset" @click="resetTimes" class="rounded-lg cursor-pointer px-3 py-1.5 bg-red-500 text-white hover:opacity-80 transition-all">Resetar</button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Início do Expediente</label>
+                <div class="flex items-center">
+                    <input type="time" x-model="inicioExpediente" @input="saveTimes" class="w-full p-2 border border-gray-300 rounded">
+                    <button type="button" @click="setCurrentTime('inicioExpediente')" class="ml-2 p-2 bg-blue-500 text-white rounded">Agora</button>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Início Intervalo</label>
+                <div class="flex items-center">
+                    <input type="time" x-model="inicioIntervalo" @input="saveTimes" class="w-full p-2 border border-gray-300 rounded">
+                    <button type="button" @click="setCurrentTime('inicioIntervalo')" class="ml-2 p-2 bg-blue-500 text-white rounded">Agora</button>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Final Intervalo</label>
+                <div class="flex items-center">
+                    <input type="time" x-model="finalIntervalo" @input="saveTimes" class="w-full p-2 border border-gray-300 rounded">
+                    <button type="button" @click="setCurrentTime('finalIntervalo')" class="ml-2 p-2 bg-blue-500 text-white rounded">Agora</button>
+                </div>
+            </div>
+        </form>
+        <div class="mt-6">
+            <h2 class="text-xl font-semibold">Horário para Sair</h2>
+            <p x-text="horarioParaSair" class="text-lg mt-2"></p>
+        </div>
+    </div>
+</body>
+</html>
