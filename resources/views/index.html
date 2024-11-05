@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Calculadora de Horário</title>
-    <link href="/public/assets/bootstrap.css?v={{.Version}}" rel="stylesheet" />
-    <script src="/public/assets/bootstrap.js?v={{.Version}}" type="text/javascript"></script>
+    <link href="/public/assets/{{.Style}}" rel="stylesheet" />
 </head>
 <body>
+    <script src="/public/assets/{{.Script}}" type="text/javascript"></script>
     <div x-data="app" x-init="init()" class="max-w-md mx-auto bg-white p-6 rounded-lg">
         <h1 class="text-2xl font-bold mb-4">Calculadora de Horário</h1>
         <form @submit.prevent>
