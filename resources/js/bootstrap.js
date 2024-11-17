@@ -58,6 +58,18 @@ Alpine.data('app', function() {
       const returnMinutes = String(returnTime.getMinutes()).padStart(2, '0');
       return `${returnHours}:${returnMinutes}`;
     },
+    scheduleNotification(endTime) {
+      const now = new Date();
+      const [endHours, endMinutes] = endTime.split(':').map(Number);
+      const endDateTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endHours, endMinutes);
+      const timeUntilEnd = endDateTime - now;
+
+      if (timeUntilEnd > 0) {
+        setTimeout(() => {
+          this.showNotification(`Horário de saída: ${endTime}`);
+        }, timeUntilEnd);
+      }
+    },
     get endTime() {
       console.clear();
       if (!this.startWork) {
@@ -86,7 +98,7 @@ Alpine.data('app', function() {
         const endTimeMinutes = (startWorkMinutes + totalWorkRemainingMinutes) % 60;
         logData['Horário Calculado de Saída'] = `${String(endTimeHours).padStart(2, '0')}:${String(endTimeMinutes).padStart(2, '0')}`;
         console.table(logData);
-        return `Estimated end time: ${String(endTimeHours).padStart(2, '0')}:${String(endTimeMinutes).padStart(2, '0')}`;
+        return `Horário Calculado de Saída: ${String(endTimeHours).padStart(2, '0')}:${String(endTimeMinutes).padStart(2, '0')}`;
       }
 
       const [startBreakHours, startBreakMinutes] = this.startBreak.split(':').map(Number);
@@ -106,13 +118,16 @@ Alpine.data('app', function() {
       const endTimeHoursActual = startWorkHours + totalWorkHoursActual + Math.floor((startWorkMinutes + totalWorkRemainingMinutesActual) / 60);
       const endTimeMinutesActual = (startWorkMinutes + totalWorkRemainingMinutesActual) % 60;
 
+      const endTimeActual = `${String(endTimeHoursActual).padStart(2, '0')}:${String(endTimeMinutesActual).padStart(2, '0')}`;
+
       logData['Duração do Intervalo'] = `${breakDurationHoursActual} hours and ${breakDurationRemainingMinutesActual} minutes`;
-      logData['Duração Total Necessária do Trabalho'] = `${totalWorkHoursActual} hours and ${totalWorkRemainingMinutesActual} minutes`;
-      logData['Horário Calculado de Saída'] = `${String(endTimeHoursActual).padStart(2, '0')}:${String(endTimeMinutesActual).padStart(2, '0')}`;
+      logData['Duração Total Necessária do Trabalho'] = `${totalWorkHoursActual} horas e ${totalWorkRemainingMinutesActual} minutos`;
+      logData['Horário Calculado de Saída'] = endTimeActual;
 
       console.table(logData);
+      this.scheduleNotification(endTimeActual);
 
-      return `${String(endTimeHoursActual).padStart(2, '0')}:${String(endTimeMinutesActual).padStart(2, '0')}`;
+      return endTimeActual;
     }
   }
 })
