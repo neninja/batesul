@@ -35,6 +35,7 @@
                     <input type="time" x-model="endBreak" @input="saveTimes" class="w-full p-2 border border-gray-300 rounded">
                     <button type="button" @click="setCurrentTime('endBreak')" class="ml-2 p-2 bg-blue-500 text-white rounded">Agora</button>
                 </div>
+                <p class="text-gray-500 mt-2" x-text="endBreak ? `Total do intervalo: ${calculateBreakDuration()}` : `Previsão de retorno: ${calculateReturnTime()}`"></p>
             </div>
         </form>
         <div class="mt-6">

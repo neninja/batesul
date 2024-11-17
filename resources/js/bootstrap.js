@@ -39,42 +39,80 @@ Alpine.data('app', function() {
       localStorage.removeItem('startBreak');
       localStorage.removeItem('endBreak');
     },
-    formatWithPad(number) {
-      return String(number).padStart(2, '0')
+    calculateBreakDuration() {
+      if (!this.startBreak || !this.endBreak) return '';
+      const [startBreakHours, startBreakMinutes] = this.startBreak.split(':').map(Number);
+      const [endBreakHours, endBreakMinutes] = this.endBreak.split(':').map(Number);
+      const startBreakDate = new Date(0, 0, 0, startBreakHours, startBreakMinutes);
+      const endBreakDate = new Date(0, 0, 0, endBreakHours, endBreakMinutes);
+      const breakDurationMinutes = (endBreakDate - startBreakDate) / (1000 * 60);
+      const breakDurationHours = Math.floor(breakDurationMinutes / 60);
+      const breakDurationRemainingMinutes = breakDurationMinutes % 60;
+      return `${String(breakDurationHours).padStart(2, '0')}:${String(breakDurationRemainingMinutes).padStart(2, '0')}`;
+    },
+    calculateReturnTime() {
+      if (!this.startBreak) return '';
+      const [startBreakHours, startBreakMinutes] = this.startBreak.split(':').map(Number);
+      const returnTime = new Date(0, 0, 0, startBreakHours, startBreakMinutes + 15);
+      const returnHours = String(returnTime.getHours()).padStart(2, '0');
+      const returnMinutes = String(returnTime.getMinutes()).padStart(2, '0');
+      return `${returnHours}:${returnMinutes}`;
     },
     get endTime() {
-      console.clear()
-      if (!this.startWork || !this.startBreak || !this.endBreak) {
-        return 'Please fill in all fields';
+      console.clear();
+      if (!this.startWork) {
+        return 'Please fill in the start work time';
       }
 
       const [startWorkHours, startWorkMinutes] = this.startWork.split(':').map(Number);
+
+      const workDurationHours = 5;
+      const workDurationMinutes = 45;
+      const breakDurationMinutes = 15;
+      const totalWorkMinutes = workDurationMinutes + breakDurationMinutes;
+      const totalWorkHours = workDurationHours + Math.floor(totalWorkMinutes / 60);
+      const totalWorkRemainingMinutes = totalWorkMinutes % 60;
+
+      let logData = {
+        'Duração do Trabalho': `${workDurationHours} hours and ${workDurationMinutes} minutes`,
+        'Duração do Intervalo': 'N/A',
+        'Duração Total Necessária do Trabalho': `${totalWorkHours} hours and ${totalWorkRemainingMinutes} minutes`,
+        'Horário de Início Fornecido': `${String(startWorkHours).padStart(2, '0')}:${String(startWorkMinutes).padStart(2, '0')}`,
+        'Horário Calculado de Saída': 'N/A'
+      };
+
+      if (!this.startBreak || !this.endBreak) {
+        const endTimeHours = startWorkHours + totalWorkHours + Math.floor((startWorkMinutes + totalWorkRemainingMinutes) / 60);
+        const endTimeMinutes = (startWorkMinutes + totalWorkRemainingMinutes) % 60;
+        logData['Horário Calculado de Saída'] = `${String(endTimeHours).padStart(2, '0')}:${String(endTimeMinutes).padStart(2, '0')}`;
+        console.table(logData);
+        return `Estimated end time: ${String(endTimeHours).padStart(2, '0')}:${String(endTimeMinutes).padStart(2, '0')}`;
+      }
+
       const [startBreakHours, startBreakMinutes] = this.startBreak.split(':').map(Number);
       const [endBreakHours, endBreakMinutes] = this.endBreak.split(':').map(Number);
 
       const startBreakDate = new Date(0, 0, 0, startBreakHours, startBreakMinutes);
       const endBreakDate = new Date(0, 0, 0, endBreakHours, endBreakMinutes);
 
-      const workDurationHours = 5;
-      const workDurationMinutes = 45;
-      console.log(`Duração de trabalho: ${this.formatWithPad(workDurationHours)}:${this.formatWithPad(workDurationMinutes)}`);
+      const breakDurationMinutesActual = (endBreakDate - startBreakDate) / (1000 * 60);
+      const breakDurationHoursActual = Math.floor(breakDurationMinutesActual / 60);
+      const breakDurationRemainingMinutesActual = breakDurationMinutesActual % 60;
 
-      const breakDurationMinutes = (endBreakDate - startBreakDate) / (1000 * 60);
-      const breakDurationHours = Math.floor(breakDurationMinutes / 60);
-      const breakDurationRemainingMinutes = breakDurationMinutes % 60;
-      console.log(`Duração do intervalo: ${this.formatWithPad(breakDurationHours)}:${this.formatWithPad(breakDurationRemainingMinutes)}`);
+      const totalWorkMinutesActual = workDurationMinutes + breakDurationRemainingMinutesActual;
+      const totalWorkHoursActual = workDurationHours + breakDurationHoursActual + Math.floor(totalWorkMinutesActual / 60);
+      const totalWorkRemainingMinutesActual = totalWorkMinutesActual % 60;
 
-      const totalWorkMinutes = workDurationMinutes + breakDurationRemainingMinutes;
-      const totalWorkHours = workDurationHours + breakDurationHours + Math.floor(totalWorkMinutes / 60);
-      const totalWorkRemainingMinutes = totalWorkMinutes % 60;
-      console.log(`Total de trabalho necessário: ${this.formatWithPad(totalWorkHours)}:${this.formatWithPad(totalWorkRemainingMinutes)}`);
+      const endTimeHoursActual = startWorkHours + totalWorkHoursActual + Math.floor((startWorkMinutes + totalWorkRemainingMinutesActual) / 60);
+      const endTimeMinutesActual = (startWorkMinutes + totalWorkRemainingMinutesActual) % 60;
 
-      const endTimeHours = startWorkHours + totalWorkHours + Math.floor((startWorkMinutes + totalWorkRemainingMinutes) / 60);
-      const endTimeMinutes = (startWorkMinutes + totalWorkRemainingMinutes) % 60;
-      console.log(`Horário iniciado: ${this.formatWithPad(startWorkHours)}:${this.formatWithPad(startWorkMinutes)}`);
-      console.log(`Horário finalização: ${this.formatWithPad(endTimeHours)}:${this.formatWithPad(endTimeMinutes)}`);
+      logData['Duração do Intervalo'] = `${breakDurationHoursActual} hours and ${breakDurationRemainingMinutesActual} minutes`;
+      logData['Duração Total Necessária do Trabalho'] = `${totalWorkHoursActual} hours and ${totalWorkRemainingMinutesActual} minutes`;
+      logData['Horário Calculado de Saída'] = `${String(endTimeHoursActual).padStart(2, '0')}:${String(endTimeMinutesActual).padStart(2, '0')}`;
 
-      return `${this.formatWithPad(endTimeHours)}:${this.formatWithPad(endTimeMinutes)}`;
+      console.table(logData);
+
+      return `${String(endTimeHoursActual).padStart(2, '0')}:${String(endTimeMinutesActual).padStart(2, '0')}`;
     }
   }
 })
