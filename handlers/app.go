@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"sync"
 	"text/template"
-	"time"
 )
 
 type ManifestEntry struct {
@@ -56,8 +55,7 @@ func App(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t.Execute(w, map[interface{}]interface{}{
-		"Version": time.Now().Unix(),
-		"Script":  ViteFile("resources/js/bootstrap.js"),
-		"Style":   ViteCss("resources/js/bootstrap.js"),
+		"Script": ViteFile("resources/js/bootstrap.js"),
+		"Style":  ViteCss("resources/js/bootstrap.js"),
 	})
 }
