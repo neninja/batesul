@@ -73,7 +73,7 @@ Alpine.data('app', function() {
     get endTime() {
       console.clear();
       if (!this.startWork) {
-        return 'Please fill in the start work time';
+        return '';
       }
 
       const [startWorkHours, startWorkMinutes] = this.startWork.split(':').map(Number);
